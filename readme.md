@@ -21,3 +21,5 @@ Steps
 ```
 Pass - Verified: https://rinkeby.etherscan.io/address/0x2CEA970AE626C8114Ca12942e96c7c2E189C16b2#contracts
 ```
+
+<img src="https://github.com/lawweiliang/investmentContract/blob/main/doc/verifyImage.png" width="500">
