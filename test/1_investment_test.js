@@ -52,7 +52,8 @@ contract('Investment Contract Testing', async ([alice]) => {
    it('converthETHToUSD function test', async () => {
       //1 ether equal 2000 dollar
       const ethInWei = web3.utils.toWei('1', 'ether');
-      const ethInUSDBigNumber = BigInt(2000 * Math.pow(10, 18));
+      // const ethInUSDBigNumber = BigInt(2000 * Math.pow(10, 18));
+      const ethInUSDBigNumber = web3.utils.toWei('2000', 'ether');
 
       const ethInUsdFromContract = await investmentInstance.converthETHToUSD(ethInWei);
       assert.equal(ethInUsdFromContract.toString(), ethInUSDBigNumber.toString());
