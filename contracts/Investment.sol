@@ -8,9 +8,7 @@ contract Investment {
 
     mapping(address => uint256) addressAmountFunded;
     address[] fundedAddress;
-
     address owner;
-
     uint256 minimumInvestment;
 
     event FundedEvent(address funder, uint256 amount, string message);
