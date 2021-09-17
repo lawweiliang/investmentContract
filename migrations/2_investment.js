@@ -15,6 +15,6 @@ module.exports = async (deployer, network) => {
     console.log('Development mockv3 address', chainlinkContractAddress);
   }
 
-  await deployer.deploy(investment, chainlinkContractAddress);
+  await deployer.deploy(investment, chainlinkContractAddress, globalVar.minimum_investment_in_dollar.value);
 
 }

@@ -5,18 +5,30 @@ const globalVar = require('../variable/global_variable.js')
 const investmentContract = artifacts.require('Investment');
 const mockV3Contract = artifacts.require('MockV3Aggregator');
 
-contract('Investment Contract Testing', async ([alice]) => {
+contract('Investment Contract Testing', async ([alice, bob]) => {
 
    let investmentInstance;
    beforeEach(async () => {
       const chainlinkInstance = await mockV3Contract.new(globalVar.chainlink.ETHUSD.decimal, globalVar.chainlink.ETHUSD.price);
-      investmentInstance = await investmentContract.new(chainlinkInstance.address);
+      investmentInstance = await investmentContract.new(chainlinkInstance.address, globalVar.minimum_investment_in_dollar.value);
    });
 
    it('fundMe function test not enough fund', async () => {
       //fund value 0.02 * 2000 = 40 dollar
       const ethWei = web3.utils.toWei('0.02', 'ether');
       await expectRevert(investmentInstance.fundMe({ from: alice, value: ethWei }), 'Funding number minimum amount is USD100');
+   });
+
+   it('getMinimumInvestmentInEth function test', async () => {
+      const minimumInvestmentInEth = await investmentInstance.getMinimumInvestmentInEth();
+
+      // ethPrice is 8 decimal(chainlink), 
+      const precision = new BN(web3.utils.toWei('1', 'ether'));
+      const minimumInvestmentInUsd = new BN(globalVar.minimum_investment_in_dollar.value);
+      const ethPriceInUsd = new BN(BigInt(globalVar.chainlink.ETHUSD.price * Math.pow(10, 18 - globalVar.chainlink.ETHUSD.decimal)));
+      const expectedMinimumInvestmentInEth = minimumInvestmentInUsd.mul(precision).div(ethPriceInUsd);
+
+      assert.equal(minimumInvestmentInEth.toString(), expectedMinimumInvestmentInEth.toString())
    });
 
    it('fundMe function test enough fund', async () => {
@@ -72,7 +84,7 @@ contract('Investment Contract Testing', async ([alice]) => {
    });
 
    it('withdraw function test only owner is allow to withdraw', async () => {
-      expectRevert(investmentInstance.withdraw(), 'You are not the owner of the contract');
+      expectRevert(investmentInstance.withdraw({ from: bob }), 'You are not the owner of the contract');
    });
 
    it('getContractBalance function test', async () => {

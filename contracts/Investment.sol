@@ -11,19 +11,21 @@ contract Investment {
 
     address owner;
 
+    uint256 minimumInvestment;
+
     event FundedEvent(address funder, uint256 amount, string message);
 
-    constructor(address _chainLinkContractAddress) {
+    constructor(address _chainLinkContractAddress, uint256 _minimumInvestment) {
         owner = msg.sender;
         pricefeed = AggregatorV3Interface(_chainLinkContractAddress);
+
+        //Funding minimum of 100 dollors
+        minimumInvestment = _minimumInvestment;
     }
 
     function fundMe() public payable {
-        //Funding minimum of 100 dollors
-        uint256 minimumUSD = 100 * 10**18;
-
         require(
-            converthETHToUSD(msg.value) >= minimumUSD,
+            converthETHToUSD(msg.value) >= minimumInvestment,
             "Funding number minimum amount is USD100"
         );
 
@@ -31,6 +33,12 @@ contract Investment {
         fundedAddress.push(msg.sender);
 
         emit FundedEvent(msg.sender, msg.value, "Amount Funded");
+    }
+
+    function getMinimumInvestmentInEth() public view returns (uint256) {
+        uint256 ethPriceInUsd = getEthPriceInUsd();
+        uint256 precision = 1 * 10**18;
+        return (minimumInvestment * precision) / ethPriceInUsd;
     }
 
     function getFundedAddressAmount(address _fundAddress)
