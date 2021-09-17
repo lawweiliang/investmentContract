@@ -5,6 +5,7 @@ const globalVar = require('../variable/global_variable.js')
 const investmentContract = artifacts.require('Investment');
 const mockV3Contract = artifacts.require('MockV3Aggregator');
 
+
 contract('Investment Contract Testing', async ([alice, bob]) => {
 
    let investmentInstance;
@@ -30,6 +31,7 @@ contract('Investment Contract Testing', async ([alice, bob]) => {
 
       assert.equal(minimumInvestmentInEth.toString(), expectedMinimumInvestmentInEth.toString())
    });
+
 
    it('fundMe function test enough fund', async () => {
       //fund value 1 * 2000 = 2000 dollar
@@ -82,6 +84,7 @@ contract('Investment Contract Testing', async ([alice, bob]) => {
       const contractBalanceAfter = await investmentInstance.getContractBalance();
       assert.equal(contractBalanceAfter.toString(), '0');
    });
+
 
    it('withdraw function test only owner is allow to withdraw', async () => {
       expectRevert(investmentInstance.withdraw({ from: bob }), 'You are not the owner of the contract');
